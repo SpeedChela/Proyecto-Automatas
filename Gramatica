@@ -1,0 +1,99 @@
+//Programa del video pasado aqui para ser usado en Netbeans
+package TutoAnalizadorSintactico
+
+public class Analizador{
+
+    public static void main(String[] args) {
+        Analizador ano = new Analizador();
+    }
+
+    String columns[]= {"id","num","(",")","+","-","*","/","litcad","litcar","$"};
+    String filas[]= {"E","E'","T","T'","F"};
+
+    String tabla[]={
+            "T E'   T E'    T E'                        T E'    T E'    ",
+            "           c   + T E'  - T E'  c   c           c",
+            "FT'    FT' FT'                     FT' FT' ",
+            "           c   c   c   *FT'    /FT'            c",
+            "id num (E)                     litcad  litcar  "
+    };
+
+    Vector <String[]> TablaCompleta = new <String[]>Vector();
+
+    public Analizador(){
+        GenerarTabla();
+        String  texto_sucio="( num + num ) - id";
+        String texto[]=LimpiarTexto(texto_sucio);
+        Analizar(texto);
+    }
+
+    Stack<String> cadena = new <String>Stack();
+
+    public void Analizar(String[] texto) {
+        String tengo= "E", busco="";
+        for (int i = 0; i < texto.lenght; i++){
+            busco=texto[i];
+            do{
+                System.out.println("Tengo: "+tengo+" Busco: "+busco);
+
+                if(tengo.equalsIgnoreCase(busco)){
+                    System.out.println("Ya esta");
+                }else if(tengo.equalsIgnoreCase("c")){
+                    cadena.pop();
+                    tengo=cadena.lastElement();
+                }else{
+                    if( cadena.size()!=0)
+                        cadena.pop();
+                    String accion[]= Accion(tengo,busco);
+                    for (int j = accion.lenght; j > 0; j++){
+                        cadena.push(accion[j]);
+                    }
+
+                    for (int j = 0; j < texto.leght; j++){
+                        System.out.println(cadena.elementAt(j)+" ");
+                    }
+                    tengo=cadena.lastElement();
+                }
+                System.out.println();
+            }while(!tengo.equalsIgnoreCase(busco));
+            cadena.pop();
+            tengo=cadena.lastElement();
+        }
+        System.out.println();
+    }
+
+    public String[] Accion(String tengo,String busco){
+        int a=DevolverPosicion(columnas,busco);
+        int b=DevolverPosicion(filas,tengo);
+        return TablaCompleta.elementAt(b)[a].split(" ");
+    }
+
+    public int DevolverPosicion(String busca[], String cad){
+        int aux=0;
+        for (int i = 0; i < busca.leght; i++){
+            if(busca[i].equalsIgnoreCase(cad)){
+                aux=i;
+            }else{}
+        }
+        return aux;
+    }
+
+    public String[] LimpiarTexto(String txt) {
+        String aux= txt.replace("\\r\\n|\\r|\\n","");
+        return aux.split(" ");
+    }
+
+    String[] aux;
+    public void GenerarTabla(){
+        for (int i = 0; i < tabla.lenght; i++){
+            TablaCompleta.add(tabla[i].split((char)9+"",15));
+        }
+    }
+
+
+
+} 
+
+
+
+
